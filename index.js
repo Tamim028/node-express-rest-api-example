@@ -1,7 +1,11 @@
 const express = require('express');
+const logger = require('./logger');
 const app = express();
 
-app.use(express.json()); //make sure to set 'Content-Type' to 'application/json' in the Headers of the request.
+app.use(express.json()); 
+app.use(logger);
+app.use(express.urlencoded( {extended: true} )); //To understand JSON in body
+app.use(express.static('public')); //Static resources folder, e.g. in browser http://localhost:PORT_NO/readme.txt to get the readme file 
 
 const courses = [
     {id: 1, name: 'course1'},
@@ -9,6 +13,12 @@ const courses = [
     {id: 3, name: 'course3'},
     {id: 4, name: 'course4'},
 ];
+
+app.use(function(req,res,next){
+    console.log('Authenticating...');
+    next();
+});
+
 
 //GET http://localhost:PORT_NO/
 app.get('/', (req, res) => {
@@ -44,7 +54,7 @@ app.post('/api/courses', (req, res)=>{
     };
     courses.push(course);
     console.log('Event: index.js -> POST course: ', course);
-    return res.send(course.name)
+    return res.send(course)
 });
 
 //PUT http://localhost:PORT_NO/api/courses/ID
