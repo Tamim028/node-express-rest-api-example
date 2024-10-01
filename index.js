@@ -1,11 +1,15 @@
 const express = require('express');
 const logger = require('./logger');
+const helmet = require('helmet');
+const morgan = require('morgan');
 const app = express();
 
 app.use(express.json()); 
 app.use(logger);
 app.use(express.urlencoded( {extended: true} )); //To understand JSON in body
 app.use(express.static('public')); //Static resources folder, e.g. in browser http://localhost:PORT_NO/readme.txt to get the readme file 
+app.use(helmet()); //Helps secure Express apps with various HTTP headers
+app.use(morgan('tiny'))
 
 const courses = [
     {id: 1, name: 'course1'},
