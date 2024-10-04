@@ -7,6 +7,10 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const app = express();
 
+//dynamic html to send as response, using pug
+app.set('view engine', 'pug'); //npm install pug
+app.set('views', './views'); //default path for views, optional
+
 app.use(express.json()); 
 app.use(logger);
 app.use(express.urlencoded( {extended: true} )); //To understand JSON in body
@@ -35,16 +39,11 @@ const courses = [
     {id: 4, name: 'course4'},
 ];
 
-app.use(function(req,res,next){
-    debug('Authenticating...');
-    next();
-});
-
-
 //GET http://localhost:PORT_NO/
 app.get('/', (req, res) => {
     debug('Event: index.js -> GET home.');
-    return res.send('Home!!!');
+    // return res.send('Home!!!');
+    return res.render('index', {title: "Node App", message: "Hello World"});
 });
 
 //GET http://localhost:PORT_NO/api/courses
