@@ -1,3 +1,4 @@
+const config = require('config');
 const express = require('express');
 const logger = require('./logger');
 const helmet = require('helmet');
@@ -13,6 +14,11 @@ app.use(helmet()); //Helps secure Express apps with various HTTP headers
 const appEnv = app.get('env');
 
 console.log(`app env: ${appEnv}`); //In terminal, use "export NODE_ENV=ENV_NAME" where ENV_NAME = production / development
+
+//configuration using npm config
+console.log('Application Name: ', config.get('name'));
+console.log('Mail  Server: ', config.get('mail.host'));
+console.log('Mail  Password: ', config.get('mail.password')); //it will come from config/custom-environment-variables after matching with the KEY we exported as export "currentApp_password=1234" in terminal
 
 if( appEnv === 'development'){ 
     app.use(morgan('tiny'))
