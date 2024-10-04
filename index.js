@@ -1,5 +1,4 @@
-const startupDebugger = require('debug')('app:startup'); //'app:startup' means - namespace for debugging
-const dbDebugger = require('debug')('app:db'); //another namespace 'db' for debug
+const debug = require('debug')('app:startup'); //'app:startup' means - namespace for debugging configure "export DEBUG=app:startup" in terminal to see debug logs.
 
 const config = require('config');
 const express = require('express');
@@ -16,19 +15,16 @@ app.use(helmet()); //Helps secure Express apps with various HTTP headers
 
 const appEnv = app.get('env');
 
-startupDebugger(`app env: ${appEnv}`); //In terminal, use "export NODE_ENV=ENV_NAME" where ENV_NAME = production / development
-
-//let's say we have database, then debugging for those
-dbDebugger('Connected to the database'); //"export DEBUG=app:db" for a specific, "export DEBUG=" for no debug print and "export DEBUG=*" for all debug print and "export DEBUG=app:db,app:startup" for multi
+debug(`app env: ${appEnv}`); //In terminal, use "export NODE_ENV=ENV_NAME" where ENV_NAME = production / development
 
 //configuration using npm config
-console.log('Application Name: ', config.get('name'));
-console.log('Mail  Server: ', config.get('mail.host'));
-console.log('Mail  Password: ', config.get('mail.password')); //it will come from config/custom-environment-variables after matching with the KEY we exported as export "currentApp_password=1234" in terminal
+debug('Application Name: ', config.get('name'));
+debug('Mail  Server: ', config.get('mail.host'));
+debug('Mail  Password: ', config.get('mail.password')); //it will come from config/custom-environment-variables after matching with the KEY we exported as export "currentApp_password=1234" in terminal
 
 if( appEnv === 'development'){ 
     app.use(morgan('tiny'))
-    console.log('MORGAN logger enabled for - DEVELOPMENT...');
+    debug('MORGAN logger enabled for - DEVELOPMENT...');
 } 
 
 
@@ -40,20 +36,20 @@ const courses = [
 ];
 
 app.use(function(req,res,next){
-    console.log('Authenticating...');
+    debug('Authenticating...');
     next();
 });
 
 
 //GET http://localhost:PORT_NO/
 app.get('/', (req, res) => {
-    console.log('Event: index.js -> GET home.');
+    debug('Event: index.js -> GET home.');
     return res.send('Home!!!');
 });
 
 //GET http://localhost:PORT_NO/api/courses
 app.get('/api/courses', (req, res)=>{
-    console.log('Event: index.js -> GET all courses, count = ', courses.length);
+    debug('Event: index.js -> GET all courses, count = ', courses.length);
     return res.send(courses);
 });
 
@@ -63,7 +59,7 @@ app.get('/api/courses/:id', (req, res)=> {
     
     if(!course) return res.status(404).send('The course with given ID was not found');
     
-    console.log('Event: index.js -> GET course: ', course);
+    debug('Event: index.js -> GET course: ', course);
     return res.send(course);
 });
 
@@ -78,7 +74,7 @@ app.post('/api/courses', (req, res)=>{
         name: req.body.name
     };
     courses.push(course);
-    console.log('Event: index.js -> POST course: ', course);
+    debug('Event: index.js -> POST course: ', course);
     return res.send(course)
 });
 
@@ -93,7 +89,7 @@ app.put('/api/courses/:id', (req, res)=>{
 
     if(req.body.name.length < 3) return res.status(400).send('Course name required and minimum 3 characters long');
     
-    console.log('Event: index.js -> PUT course: ', course);
+    debug('Event: index.js -> PUT course: ', course);
     course.name = req.body.name
     return res.send(course);
 });
@@ -105,12 +101,12 @@ app.delete('/api/courses/:id', (req, res) => {
     
     const index = courses.indexOf(course);
     courses.splice(index, 1);
-    console.log('Event: index.js -> DELETE course: ', course);
+    debug('Event: index.js -> DELETE course: ', course);
     return res.send(course);
 });
 
 const port = process.env.PORT || 3000
 
 app.listen(port, () => {
-    console.log(`Listening on port ${port}...`);
+    debug(`Listening on port ${port}...`);
 });
