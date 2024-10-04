@@ -1,3 +1,6 @@
+const startupDebugger = require('debug')('app:startup'); //'app:startup' means - namespace for debugging
+const dbDebugger = require('debug')('app:db'); //another namespace 'db' for debug
+
 const config = require('config');
 const express = require('express');
 const logger = require('./logger');
@@ -13,7 +16,10 @@ app.use(helmet()); //Helps secure Express apps with various HTTP headers
 
 const appEnv = app.get('env');
 
-console.log(`app env: ${appEnv}`); //In terminal, use "export NODE_ENV=ENV_NAME" where ENV_NAME = production / development
+startupDebugger(`app env: ${appEnv}`); //In terminal, use "export NODE_ENV=ENV_NAME" where ENV_NAME = production / development
+
+//let's say we have database, then debugging for those
+dbDebugger('Connected to the database'); //"export DEBUG=app:db" for a specific, "export DEBUG=" for no debug print and "export DEBUG=*" for all debug print and "export DEBUG=app:db,app:startup" for multi
 
 //configuration using npm config
 console.log('Application Name: ', config.get('name'));
